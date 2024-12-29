@@ -22,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class Department implements Serializable {
+public class  Department implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

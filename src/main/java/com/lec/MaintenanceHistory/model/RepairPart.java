@@ -2,6 +2,9 @@ package com.lec.MaintenanceHistory.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +32,8 @@ public class RepairPart implements Serializable {
     @JoinColumn(name = "repair_id", nullable = false)
     private Repair repair;
 
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
     @JoinColumn(name = "part_id", nullable = false)
     private Part part;
