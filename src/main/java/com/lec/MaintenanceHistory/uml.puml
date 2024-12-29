@@ -1,0 +1,206 @@
+@startuml Maintenance History
+!define Table(x) class x << (T,#FFAAAA) >>
+!define Service(x) class x << (S,#AAFFAA) >>
+!define Repository(x) class x << (R,#FFD700) >>
+!define DTO(x) class x << (D,#87CEEB) >>
+!define ExceptionHandler(x) class x << (E,#FFB6C1) >>
+
+'---------------------------- Models ----------------------------
+
+class Department {
+    - id: Integer
+    - name: String
+    - description: String
+}
+
+class Machine {
+    - id: Integer
+    - name: String
+    - department: Department
+}
+
+class Part {
+    - id: Integer
+    - name: String
+    - quantityAvailable: Integer
+}
+
+class Repair {
+    - id: Integer
+    - date: Date
+    - description: String
+    - repairParts: List<RepairPart>
+}
+
+class RepairPart {
+    - id: Integer
+    - description: String
+    - quantityUsed: Integer
+    - repair: Repair
+}
+
+'---------------------------- Repositories ----------------------------
+
+Repository(DepartmentRepository)
+Repository(MachineRepository)
+Repository(PartRepository)
+Repository(RepairRepository)
+Repository(RepairPartRepository)
+
+'---------------------------- Services ----------------------------
+
+Service(DepartmentService) {
+    + findAll(): List<Department>
+    + findById(Integer): Department
+    + save(Department): Department
+    + update(Integer, Dep/'  '/artment): Department
+    + delete(Integer): void
+}
+
+Service(MachineService) {
+    + findAll(): List<Machine>
+    + findById(Integer): Machine
+    + save(Machine): Machine
+    + update(Integer, Machine): Machine
+    + delete(Integer): void
+}
+
+Service(PartService) {
+    + findAll(): List<Part>
+    + findById(Integer): Part
+    + save(Part): Part
+    + update(Integer, Part): Part
+    + delete(Integer): void
+}
+
+Service(RepairService) {
+    + findAll(): List<Repair>
+    + findById(Integer): Repair
+    + save(Repair): Repair
+    + update(Integer, Repair): Repair
+    + delete(Integer): void
+    + addRepairPart(Integer, RepairPart): Repair
+    + removeRepairPart(Integer, Integer): Repair
+}
+
+Service(RepairPartService) {
+    + findAll(): List<RepairPart>
+    + findById(Integer): RepairPart
+    + save(RepairPart): RepairPart
+    + delete(Integer): void
+}
+
+'---------------------------- DTOs ----------------------------
+
+DTO(DeleteResponseDTO) {
+    - status: String
+    - message: String
+    + DeleteResponseDTO(String, String)
+    + DeleteResponseDTO()
+    + getStatus(): String
+    + setStatus(String): void
+    + getMessage(): String
+    + setMessage(String): void
+}
+
+'---------------------------- Exception Handler ----------------------------
+
+ExceptionHandler(CustomExceptionHandler) {
+    + handleGeneralException(Exception): ResponseEntity<DeleteResponseDTO>
+}
+
+'---------------------------- Controllers ----------------------------
+
+class DepartmentController {
+    + findAll(): ResponseEntity<List<Department>>
+    + findById(Integer): ResponseEntity<Department>
+    + save(Department): ResponseEntity<Department>
+    + delete(Integer): ResponseEntity<DeleteResponseDTO>
+    + update(Integer, Department): ResponseEntity<Department>
+}
+
+class MachineController {
+    + findAll(): ResponseEntity<List<Machine>>
+    + findById(Integer): ResponseEntity<Machine>
+    + save(Machine): ResponseEntity<Machine>
+    + delete(Integer): ResponseEntity<DeleteResponseDTO>
+    + update(Integer, Machine): ResponseEntity<Machine>
+}
+
+class PartController {
+    + findAll(): ResponseEntity<List<Part>>
+    + findById(Integer): ResponseEntity<Part>
+    + save(Part): ResponseEntity<Part>
+    + delete(Integer): ResponseEntity<DeleteResponseDTO>
+    + update(Integer, Part): ResponseEntity<Part>
+}
+
+class RepairController {
+    + findAll(): ResponseEntity<List<Repair>>
+    + findById(Integer): ResponseEntity<Repair>
+    + save(Repair): ResponseEntity<Repair>
+    + delete(Integer): ResponseEntity<DeleteResponseDTO>
+    + update(Integer, Repair): ResponseEntity<Repair>
+    + addRepairPart(Integer, RepairPart): ResponseEntity<Repair>
+    + removeRepairPart(Integer, Integer): ResponseEntity<Repair>
+}
+
+class RepairPartController {
+    + findAll(): ResponseEntity<List<RepairPart>>
+    + findById(Integer): ResponseEntity<RepairPart>
+    + save(RepairPart): ResponseEntity<RepairPart>
+    + delete(Integer): ResponseEntity<DeleteResponseDTO>
+}
+
+'---------------------------- Relationships ----------------------------
+
+' Models to Repositories
+Department --> DepartmentRepository
+Machine --> MachineRepository
+Part --> PartRepository
+Repair --> RepairRepository
+RepairPart --> RepairPartRepository
+
+' Services to Repositories
+DepartmentService --> DepartmentRepository
+MachineService --> MachineRepository
+MachineService --> DepartmentService
+PartService --> PartRepository
+RepairService --> RepairRepository
+RepairService --> RepairPartService
+RepairPartService --> RepairPartRepository
+
+' Services to Models
+DepartmentService --> Department
+MachineService --> Machine
+MachineService --> Department
+PartService --> Part
+RepairService --> Repair
+RepairService --> RepairPart
+RepairPartService --> RepairPart
+
+' Controllers to Services
+DepartmentController --> DepartmentService
+MachineController --> MachineService
+PartController --> PartService
+RepairController --> RepairService
+RepairPartController --> RepairPartService
+
+' Services to DTOs
+DepartmentService --> DeleteResponseDTO
+MachineService --> DeleteResponseDTO
+PartService --> DeleteResponseDTO
+RepairService --> DeleteResponseDTO
+RepairPartService --> DeleteResponseDTO
+
+' Exception Handler and DTO
+CustomExceptionHandler --> DeleteResponseDTO
+
+' Controllers to DTOs
+DepartmentController --> DeleteResponseDTO
+MachineController --> DeleteResponseDTO
+PartController --> DeleteResponseDTO
+RepairController --> DeleteResponseDTO
+RepairPartController --> DeleteResponseDTO
+
+@enduml

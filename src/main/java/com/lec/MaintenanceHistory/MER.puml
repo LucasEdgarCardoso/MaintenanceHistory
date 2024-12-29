@@ -1,0 +1,54 @@
+@startuml MER
+entity Department {
+  * id : Integer
+  --
+  name : String
+  phone : String
+}
+
+entity Machine {
+  * id : Integer
+  --
+  name : String
+  model : String
+  --
+  department_id : Integer
+}
+
+entity Part {
+  * id : Integer
+  --
+  name : String
+  description : String
+  stockQuantity : Integer
+}
+
+entity Repair {
+  * id : Integer
+  --
+  date : LocalDate
+  description : String
+  --
+  machine_id : Integer
+}
+
+entity RepairPart {
+  * id : Integer
+  --
+  repair_id : Integer
+  part_id : Integer
+  quantityUsed : Integer
+  description : String
+}
+
+entity Users {
+  * username : String
+  --
+  password : String
+}
+
+Department ||--o{ Machine 
+Machine ||--o{ Repair
+Repair ||--o{ RepairPart 
+Part ||--o{ RepairPart  
+@enduml
