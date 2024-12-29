@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 public class SwaggerConfig {
     @Bean
     public GroupedOpenApi api() {
+        
         return GroupedOpenApi.builder()
                              .group("v1")
                              .packagesToScan("com.lec")
