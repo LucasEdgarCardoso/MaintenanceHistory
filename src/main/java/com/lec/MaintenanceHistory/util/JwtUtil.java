@@ -1,31 +1,53 @@
 package com.lec.MaintenanceHistory.util;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.lec.MaintenanceHistory.model.Users;
 
 @Component
 public class JwtUtil {
 
-    private String secretKey = "secret_key";
+    @Value("${api.security.token.secret}")
+    private String secretKey;
 
-    public String generateToken(String username) {
-        Algorithm algorithm = Algorithm.HMAC256(secretKey);
-        return JWT.create()
-                .withSubject(username)
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Expira em 10 horas
-                .sign(algorithm);
+    public String generateToken(Users user) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            return JWT.create()
+                    .withIssuer("auth-api")
+                    .withSubject(user.getLogin())
+                    .withIssuedAt(new Date())
+                    .withExpiresAt(genExpirationDate())
+                    .sign(algorithm);
+        } catch (JWTCreationException e) {
+            throw new RuntimeException("Error while generating token", e);
+        }
     }
 
-    public String extractUsername(String token) {
-        return JWT.decode(token).getSubject();
+    public String validateToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            return JWT.require(algorithm)
+                    .withIssuer("auth-api")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTCreationException e) {
+            return "";
+        }
     }
 
-    public boolean validateToken(String token, String username) {
-        return username.equals(extractUsername(token));
+    private Instant genExpirationDate() {
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
+
 }
