@@ -44,6 +44,11 @@ public class DepartmentController {
         return ResponseEntity.created(uri).body(departmentAux);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Department> update(@PathVariable Integer id, @RequestBody Department updatedDepartment) {
+        return ResponseEntity.ok().body(departmentService.update(id, updatedDepartment));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<DeleteResponseDTO> delete(@PathVariable Integer id) {
         try {
@@ -52,11 +57,6 @@ public class DepartmentController {
         } catch (Exception e) {
             throw new RuntimeException("Error when deleting department: " + e.getMessage());
         }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Department> update(@PathVariable Integer id, @RequestBody Department updatedDepartment) {
-        return ResponseEntity.ok().body(departmentService.update(id, updatedDepartment));
     }
 
 }
